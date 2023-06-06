@@ -2,7 +2,9 @@
 
 under the hood it used https://openapi-generator.tech/ without previous installation.
 
-# Example
+# Installation and usage
+
+```npm install openapi_js```
 
 In my case, I created the `interfaces` folder in the root of the project and added a file with `interface.js` there with one of the options below.
 
@@ -80,9 +82,18 @@ const getAuthToken = async () => {
 })();
 ```
 
-# PACKAGE.JSON init
+# Options
 
-Just add this ib your package.json
+## Props
+
+- `filesToRemove` - default: ```["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"]```
+- `prefixInterfaces` - default: ```{
+  interface: "I", enum: "E", type: "T"
+}```
+
+# package.json
+
+Just add this script to your package.json
 ```json
 {
   "scripts": {
