@@ -12,5 +12,8 @@
   "keywords": [
     "openapi",
     "openapi_js"
-  ]
+  ],
+  "bin": {
+    "openapi_js": "index.js"
+  }
 }
