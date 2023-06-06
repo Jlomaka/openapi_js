@@ -2,10 +2,11 @@
   "name": "openapi_js",
   "version": "0.8.0",
   "description": "",
-  "author": "Jlomaka",
+  "author": "Jlomaka <webodinstudio@gmail.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jlomaka/openapi_js"
-  }
+  },
+  "keywords": ["openapi", "openapi_js"]
 }
