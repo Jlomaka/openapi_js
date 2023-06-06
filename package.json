@@ -3,10 +3,14 @@
   "version": "0.8.0",
   "description": "",
   "author": "Jlomaka <webodinstudio@gmail.com>",
+  "main": "index.js",
   "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jlomaka/openapi_js"
   },
-  "keywords": ["openapi", "openapi_js"]
+  "keywords": [
+    "openapi",
+    "openapi_js"
+  ]
 }
