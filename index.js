@@ -14,11 +14,15 @@ const generatorInterfaces = async ({
   },
   openapiGeneratorCLIConfiguration = {}
 }) => {
+
+  if(!openapiGeneratorCLIConfiguration.output){
+    throw new Error("Add output before starting, example: path.join(__dirname, \"./\")");
+  }
+
   console.time("generate");
   let openapiGeneratorCLIConfig = {
     "generator-name": "typescript-axios",
     "model-name-prefix": "SIL",
-    "output": path.join(__dirname, "./"),
     ...openapiGeneratorCLIConfiguration
   };
 
