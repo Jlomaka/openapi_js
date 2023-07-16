@@ -1,10 +1,36 @@
 import childProcess from "child_process";
-import path, {dirname} from "path";
+import path from "path";
 import fs from "fs";
-import {fileURLToPath} from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export const checkJavaInstall = async () => {
+  const cmd = `java -version`;
+
+  try {
+    childProcess.execSync(cmd);
+  } catch (err) {
+    throw new Error("Install Java before starting");
+  }
+};
+
+interface IPrefixInterfaces {
+  interface?: string;
+  enum?: string;
+  type?: string;
+}
+
+interface IOpenapiGeneratorCLIConfiguration {
+  readonly ["generator-name"]?: string;
+  ["model-name-prefix"]?: string;
+  output?: string;
+}
+
+interface IProps {
+  pathToGenerator?: string;
+  filesToRemove?: string[];
+  filesToModify?: string[];
+  prefixInterfaces?: IPrefixInterfaces;
+  openapiGeneratorCLIConfiguration?: IOpenapiGeneratorCLIConfiguration;
+}
 
 // TODO add checker on java
 /**
@@ -15,19 +41,22 @@ export async function generatorInterfaces ({
   filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"],
   filesToModify = ["api.ts"],
   prefixInterfaces = {
-   interface: "I", enum: "E", type: "T"
+    interface: "I", enum: "E", type: "T"
   },
   openapiGeneratorCLIConfiguration = {}
-}) {
+}: IProps) {
 
   if (!openapiGeneratorCLIConfiguration.output) {
     throw new Error("Add output before starting, example: path.join(__dirname, \"./\")");
   }
 
+  await checkJavaInstall();
+
   console.time("generate");
-  let openapiGeneratorCLIConfig = {
+  let openapiGeneratorCLIConfig: IOpenapiGeneratorCLIConfiguration = {
     "generator-name": "typescript-axios",
     "model-name-prefix": "API",
+    "output": path.join(__dirname, "./"),
     ...openapiGeneratorCLIConfiguration
   };
 
@@ -44,8 +73,7 @@ export async function generatorInterfaces ({
     childProcess.execSync(cmd);
   };
 
-  // TODO update to Promise.all
-  const removePaths = (output, files) => files.forEach((filePath) => {
+  const removePaths = (output: string, files: string[]) => files.forEach((filePath) => {
     const fullPath = path.join(output, filePath);
 
     try {
@@ -61,8 +89,8 @@ export async function generatorInterfaces ({
     }
   });
 
-  const replaceExport = (source, exportType) => {
-    const prefix = prefixInterfaces[exportType];
+  const replaceExport = (source: string, exportType: any) => {
+    const prefix = [prefixInterfaces as IPrefixInterfaces]?.[exportType] || "";
     const matches = source.matchAll(new RegExp(`export ${exportType} (\\w+)`, "g"));
 
     Array.from(matches, ([, exportName]) => {
@@ -72,15 +100,27 @@ export async function generatorInterfaces ({
     return source;
   };
 
-  // TODO replace comments like //
-  const replaceComments = (source) => {
+  const replaceReference = (source: string) => {
     source = source.replace(new RegExp("(\\/\\*\\*\n)((.|\\n)*?)(\\*\\/)", "g"), "");
     return source;
   };
 
-  // TODO replace all empty string
+  const replaceComments = (source: string) => {
+    source = source.replace(new RegExp("\\/\\/ [a-zA-Z0-9 '\"@\.]+\\n", "g"), "");
+    return source;
+  };
 
-  const updateConstName = (sources) => {
+  const replaceEmptyLine = (source: string) => {
+    source = source.replace(new RegExp("[^A-Za-z0-9*/';=>{}()`,\.]+\\n[^a-zA-Z0-9]", "g"), "\n");
+    return source;
+  };
+
+  const replaceSingleQuote = (source: string) => {
+    source = source.replace(new RegExp("'", "g"), "\"");
+    return source;
+  };
+
+  const updateConstName = (sources: string) => {
     sources = sources.replace(new RegExp("'([a-zA-Z0-9]+)'(\\??:)", "g"), "$1$2");
     return sources;
   };
@@ -88,7 +128,7 @@ export async function generatorInterfaces ({
   const renameExports = () => {
     filesToModify.forEach((file) => {
       // Define file system path
-      const filePath = path.join(openapiGeneratorCLIConfig.output, file);
+      const filePath = path.join(openapiGeneratorCLIConfig.output || "./", file);
 
       // Read generated file
       let fileContent = fs.readFileSync(filePath).toString();
@@ -98,7 +138,10 @@ export async function generatorInterfaces ({
         fileContent = replaceExport(fileContent, exportTypes);
       });
 
+      fileContent = replaceReference(fileContent);
       fileContent = replaceComments(fileContent);
+      fileContent = replaceEmptyLine(fileContent);
+      fileContent = replaceSingleQuote(fileContent);
       fileContent = updateConstName(fileContent);
 
       fs.writeFileSync(filePath, fileContent);
@@ -108,7 +151,7 @@ export async function generatorInterfaces ({
   runGenerator();
   renameExports();
   // TODO check where is problem with generation
-  removePaths(openapiGeneratorCLIConfig.output, filesToRemove);
+  removePaths(openapiGeneratorCLIConfig.output || "./", filesToRemove);
 
   console.timeEnd("generate");
 }

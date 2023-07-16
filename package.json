@@ -1,26 +1,42 @@
 {
   "name": "openapi_js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
   "author": "Jlomaka <webodinstudio@gmail.com>",
-  "main": "index.js",
   "license": "ISC",
-  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.js",
   "scripts": {
-    "test": "node interfaces/interface.js"
+    "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
+    "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
+    "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
+    "clean": "node tools/cleanup",
+    "package": "npm run build && npm pack",
+    "test": "ts-node interfaces/interface.ts"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Jlomaka/openapi_js"
+  },
+  "bugs": {
+    "url": "https://github.com/Jlomaka/openapi_js/issues"
   },
   "keywords": [
     "openapi",
     "openapi_js"
   ],
   "bin": {
-    "openapi_js": "index.js"
+    "openapi_js": "src/index.ts"
   },
   "devDependencies": {
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "ts-node": "^10.9.1"
   }
 }
