@@ -1,28 +1,33 @@
-const childProcess = require("child_process");
-const path = require("path");
-const fs = require("fs");
+import childProcess from "child_process";
+import path, {dirname} from "path";
+import fs from "fs";
+import {fileURLToPath} from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// TODO add checker on java
 /**
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
-const generatorInterfaces = async ({
+export async function generatorInterfaces ({
   pathToGenerator = path.join(__dirname, "./openapi-generator-cli-6.1.0.jar"),
   filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"],
   filesToModify = ["api.ts"],
   prefixInterfaces = {
-    interface: "I", enum: "E", type: "T"
+   interface: "I", enum: "E", type: "T"
   },
   openapiGeneratorCLIConfiguration = {}
-}) => {
+}) {
 
-  if(!openapiGeneratorCLIConfiguration.output){
+  if (!openapiGeneratorCLIConfiguration.output) {
     throw new Error("Add output before starting, example: path.join(__dirname, \"./\")");
   }
 
   console.time("generate");
   let openapiGeneratorCLIConfig = {
     "generator-name": "typescript-axios",
-    "model-name-prefix": "SIL",
+    "model-name-prefix": "API",
     ...openapiGeneratorCLIConfiguration
   };
 
@@ -39,6 +44,7 @@ const generatorInterfaces = async ({
     childProcess.execSync(cmd);
   };
 
+  // TODO update to Promise.all
   const removePaths = (output, files) => files.forEach((filePath) => {
     const fullPath = path.join(output, filePath);
 
@@ -66,10 +72,13 @@ const generatorInterfaces = async ({
     return source;
   };
 
+  // TODO replace comments like //
   const replaceComments = (source) => {
     source = source.replace(new RegExp("(\\/\\*\\*\n)((.|\\n)*?)(\\*\\/)", "g"), "");
     return source;
   };
+
+  // TODO replace all empty string
 
   const updateConstName = (sources) => {
     sources = sources.replace(new RegExp("'([a-zA-Z0-9]+)'(\\??:)", "g"), "$1$2");
@@ -102,6 +111,4 @@ const generatorInterfaces = async ({
   removePaths(openapiGeneratorCLIConfig.output, filesToRemove);
 
   console.timeEnd("generate");
-};
-
-module.exports = {generatorInterfaces};
+}

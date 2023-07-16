@@ -1,1 +1,7 @@
+node_modules
 .idea
+/interfaces/api.ts
+/interfaces/base.ts
+/interfaces/common.ts
+/interfaces/configuration.ts
+/interfaces/index.ts

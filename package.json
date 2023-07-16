@@ -1,10 +1,14 @@
 {
   "name": "openapi_js",
-  "version": "0.8.2",
+  "version": "1.1.0",
   "description": "",
   "author": "Jlomaka <webodinstudio@gmail.com>",
   "main": "index.js",
   "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "test": "node interfaces/interface.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Jlomaka/openapi_js"
@@ -15,5 +19,8 @@
   ],
   "bin": {
     "openapi_js": "index.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
   }
 }
