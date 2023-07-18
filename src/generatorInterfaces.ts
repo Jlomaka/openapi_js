@@ -64,7 +64,7 @@ interface IProps {
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
 export async function generatorInterfaces ({
-  pathToGenerator = path.join(process.cwd(), "/files/openapi-generator-cli-6.1.0.jar"),
+  pathToGenerator = path.join(__dirname, "../../files/openapi-generator-cli-6.1.0.jar"),
   filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"],
   filesToModify = ["api.ts"],
   prefixInterfaces = {

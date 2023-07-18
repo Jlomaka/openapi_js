@@ -92,7 +92,7 @@ exports.checkFolderExistsAndIfNeededCreateNew = checkFolderExistsAndIfNeededCrea
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
 function generatorInterfaces(_a) {
-    var _b = _a.pathToGenerator, pathToGenerator = _b === void 0 ? path_1.default.join(process.cwd(), "/files/openapi-generator-cli-6.1.0.jar") : _b, _c = _a.filesToRemove, filesToRemove = _c === void 0 ? ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"] : _c, _d = _a.filesToModify, filesToModify = _d === void 0 ? ["api.ts"] : _d, _e = _a.prefixInterfaces, prefixInterfaces = _e === void 0 ? {
+    var _b = _a.pathToGenerator, pathToGenerator = _b === void 0 ? path_1.default.join(__dirname, "../../files/openapi-generator-cli-6.1.0.jar") : _b, _c = _a.filesToRemove, filesToRemove = _c === void 0 ? ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"] : _c, _d = _a.filesToModify, filesToModify = _d === void 0 ? ["api.ts"] : _d, _e = _a.prefixInterfaces, prefixInterfaces = _e === void 0 ? {
         interface: "I", enum: "E", type: "T"
     } : _e, _f = _a.openapiGeneratorCLIConfiguration, openapiGeneratorCLIConfiguration = _f === void 0 ? {} : _f;
     return __awaiter(this, void 0, void 0, function () {
