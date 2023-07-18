@@ -1,16 +1,12 @@
-import {generatorInterfaces} from "../src";
-import {join} from "path";
+import {generatorInterfaces, IOpenapiGeneratorCLIConfiguration} from "../src";
 
 const linkToSwagger = "http://rackerlabs.github.io/wadl2swagger/openstack/swagger/dbaas.json";
 
-/**
- *
- */
 (async () => {
   try {
-    const openapiGeneratorCLIConfiguration = {
+    const openapiGeneratorCLIConfiguration: IOpenapiGeneratorCLIConfiguration = {
       "input-spec": linkToSwagger,
-      "output": join(__dirname, "./"),
+      "output": "./interfaces",
     };
 
     await generatorInterfaces({

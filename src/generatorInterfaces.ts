@@ -2,6 +2,8 @@ import childProcess from "child_process";
 import path from "path";
 import fs from "fs";
 
+const directoryName = "./openapiInterfaces";
+
 export const checkJavaInstall = async () => {
   const cmd = `java -version`;
 
@@ -12,15 +14,41 @@ export const checkJavaInstall = async () => {
   }
 };
 
+export const checkFolderExistsAndIfNeededCreateNew = async (output = directoryName) => {
+  try {
+    const folderName = path.join(process.cwd(), output);
+
+    if (!fs.existsSync(folderName)) {
+      fs.mkdirSync(folderName);
+    }
+  } catch (err) {
+    throw new Error("Folder value not valid, try this one 'output:\"./\"'");
+  }
+};
+
 interface IPrefixInterfaces {
   interface?: string;
   enum?: string;
   type?: string;
 }
 
-interface IOpenapiGeneratorCLIConfiguration {
+export interface IOpenapiGeneratorCLIConfiguration {
   readonly ["generator-name"]?: string;
+  /**
+   * API
+   */
   ["model-name-prefix"]?: string;
+  /**
+   * https://example.com/swagger.json
+   */
+  ["input-spec"]?: string;
+  /**
+   * @example "Authorization:Token ${token}"
+   */
+  auth?: string;
+  /**
+   * @example "./interfaces"
+   */
   output?: string;
 }
 
@@ -32,12 +60,11 @@ interface IProps {
   openapiGeneratorCLIConfiguration?: IOpenapiGeneratorCLIConfiguration;
 }
 
-// TODO add checker on java
 /**
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
 export async function generatorInterfaces ({
-  pathToGenerator = path.join(__dirname, "./openapi-generator-cli-6.1.0.jar"),
+  pathToGenerator = path.join(process.cwd(), "/files/openapi-generator-cli-6.1.0.jar"),
   filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"],
   filesToModify = ["api.ts"],
   prefixInterfaces = {
@@ -45,22 +72,22 @@ export async function generatorInterfaces ({
   },
   openapiGeneratorCLIConfiguration = {}
 }: IProps) {
-
-  if (!openapiGeneratorCLIConfiguration.output) {
-    throw new Error("Add output before starting, example: path.join(__dirname, \"./\")");
-  }
+  console.debug("Your project folder:", process.cwd());
 
   await checkJavaInstall();
 
-  console.time("generate");
-  let openapiGeneratorCLIConfig: IOpenapiGeneratorCLIConfiguration = {
+  await checkFolderExistsAndIfNeededCreateNew(openapiGeneratorCLIConfiguration?.output);
+
+  const openapiGeneratorCLIConfig: IOpenapiGeneratorCLIConfiguration = {
     "generator-name": "typescript-axios",
     "model-name-prefix": "API",
-    "output": path.join(__dirname, "./"),
-    ...openapiGeneratorCLIConfiguration
+    ...openapiGeneratorCLIConfiguration,
+    output: path.join(process.cwd(), openapiGeneratorCLIConfiguration?.output || directoryName),
   };
 
-  console.log("configuration:", openapiGeneratorCLIConfig);
+  console.info("configuration:", openapiGeneratorCLIConfig);
+
+  console.time("generate");
 
   const runGenerator = () => {
     const configString = Object.entries(openapiGeneratorCLIConfig)
@@ -68,7 +95,7 @@ export async function generatorInterfaces ({
 
     const cmd = `java -jar ${pathToGenerator} generate ${configString}`;
 
-    console.log("command:", cmd);
+    console.info("command:", cmd);
 
     childProcess.execSync(cmd);
   };
@@ -127,13 +154,10 @@ export async function generatorInterfaces ({
 
   const renameExports = () => {
     filesToModify.forEach((file) => {
-      // Define file system path
-      const filePath = path.join(openapiGeneratorCLIConfig.output || "./", file);
+      const filePath = path.join(openapiGeneratorCLIConfig.output || directoryName, file);
 
-      // Read generated file
       let fileContent = fs.readFileSync(filePath).toString();
 
-      // Execute replace for every export type
       Object.keys(prefixInterfaces).forEach((exportTypes) => {
         fileContent = replaceExport(fileContent, exportTypes);
       });
@@ -150,8 +174,7 @@ export async function generatorInterfaces ({
 
   runGenerator();
   renameExports();
-  // TODO check where is problem with generation
-  removePaths(openapiGeneratorCLIConfig.output || "./", filesToRemove);
+  removePaths(openapiGeneratorCLIConfig.output || directoryName, filesToRemove);
 
   console.timeEnd("generate");
 }

@@ -1,4 +1,5 @@
 node_modules
+openapiInterfaces
 .idea
 /interfaces/api.ts
 /interfaces/base.ts

@@ -1,12 +1,12 @@
 {
   "name": "openapi_js",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "description": "",
   "author": "Jlomaka <webodinstudio@gmail.com>",
   "license": "ISC",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
     "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
@@ -14,7 +14,7 @@
     "build": "npm run build:cjs && npm run build:esm && npm run build:types",
     "clean": "node tools/cleanup",
     "package": "npm run build && npm pack",
-    "test": "ts-node interfaces/interface.ts"
+    "test": "ts-node test/test.ts"
   },
   "repository": {
     "type": "git",

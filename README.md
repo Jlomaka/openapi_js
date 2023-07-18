@@ -11,7 +11,6 @@ In my case, I created the `interfaces` folder in the root of the project and add
 ## Without Auth
 ```js
 const {generatorInterfaces} = require("openapi_js");
-const path = require("path");
 
 /**
  * @example {https://{{SITE_NAME}}/swagger.json}
@@ -23,7 +22,8 @@ const linkToSwagger = "{{LINK_TO_YOUR_SWAGGER}}";
 
     const openapiGeneratorCLIConfiguration = {
       "input-spec": linkToSwagger,
-      "output": path.join(__dirname, "./"),
+      // folder for files to be created
+      "output": "./interfaces",
     };
 
     await generatorInterfaces({
@@ -74,7 +74,8 @@ const getAuthToken = async () => {
     const openapiGeneratorCLIConfiguration = {
       "input-spec": linkToSwagger,
       "auth": `"Authorization:Token ${token}"`,
-      "output": path.join(__dirname, "./"),
+      // folder for files to be created
+      "output": "./interfaces",
     };
 
     await generatorInterfaces({

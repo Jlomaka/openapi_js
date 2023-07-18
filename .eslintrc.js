@@ -4,5 +4,8 @@ module.exports = {
   parserOptions: {
     sourceType: "module",
   },
+  rules: {
+    "@typescript-eslint/no-explicit-any": ["off"]
+  },
   plugins: ["@typescript-eslint"],
 }
