@@ -1,12 +1,27 @@
 export declare const checkJavaInstall: () => Promise<void>;
+export declare const checkFolderExistsAndIfNeededCreateNew: (output?: string) => Promise<void>;
 interface IPrefixInterfaces {
     interface?: string;
     enum?: string;
     type?: string;
 }
-interface IOpenapiGeneratorCLIConfiguration {
+export interface IOpenapiGeneratorCLIConfiguration {
     readonly ["generator-name"]?: string;
+    /**
+     * API
+     */
     ["model-name-prefix"]?: string;
+    /**
+     * https://example.com/swagger.json
+     */
+    ["input-spec"]?: string;
+    /**
+     * @example "Authorization:Token ${token}"
+     */
+    auth?: string;
+    /**
+     * @example "./interfaces"
+     */
     output?: string;
 }
 interface IProps {

@@ -50,10 +50,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generatorInterfaces = exports.checkJavaInstall = void 0;
+exports.generatorInterfaces = exports.checkFolderExistsAndIfNeededCreateNew = exports.checkJavaInstall = void 0;
 var child_process_1 = __importDefault(require("child_process"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
+var directoryName = "./openapiInterfaces";
 var checkJavaInstall = function () { return __awaiter(void 0, void 0, void 0, function () {
     var cmd;
     return __generator(this, function (_a) {
@@ -68,12 +69,30 @@ var checkJavaInstall = function () { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 exports.checkJavaInstall = checkJavaInstall;
-// TODO add checker on java
+var checkFolderExistsAndIfNeededCreateNew = function (output) {
+    if (output === void 0) { output = directoryName; }
+    return __awaiter(void 0, void 0, void 0, function () {
+        var folderName;
+        return __generator(this, function (_a) {
+            try {
+                folderName = path_1.default.join(process.cwd(), output);
+                if (!fs_1.default.existsSync(folderName)) {
+                    fs_1.default.mkdirSync(folderName);
+                }
+            }
+            catch (err) {
+                throw new Error("Folder value not valid, try this one 'output:\"./\"'");
+            }
+            return [2 /*return*/];
+        });
+    });
+};
+exports.checkFolderExistsAndIfNeededCreateNew = checkFolderExistsAndIfNeededCreateNew;
 /**
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
 function generatorInterfaces(_a) {
-    var _b = _a.pathToGenerator, pathToGenerator = _b === void 0 ? path_1.default.join(__dirname, "./openapi-generator-cli-6.1.0.jar") : _b, _c = _a.filesToRemove, filesToRemove = _c === void 0 ? ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"] : _c, _d = _a.filesToModify, filesToModify = _d === void 0 ? ["api.ts"] : _d, _e = _a.prefixInterfaces, prefixInterfaces = _e === void 0 ? {
+    var _b = _a.pathToGenerator, pathToGenerator = _b === void 0 ? path_1.default.join(process.cwd(), "/files/openapi-generator-cli-6.1.0.jar") : _b, _c = _a.filesToRemove, filesToRemove = _c === void 0 ? ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"] : _c, _d = _a.filesToModify, filesToModify = _d === void 0 ? ["api.ts"] : _d, _e = _a.prefixInterfaces, prefixInterfaces = _e === void 0 ? {
         interface: "I", enum: "E", type: "T"
     } : _e, _f = _a.openapiGeneratorCLIConfiguration, openapiGeneratorCLIConfiguration = _f === void 0 ? {} : _f;
     return __awaiter(this, void 0, void 0, function () {
@@ -81,15 +100,16 @@ function generatorInterfaces(_a) {
         return __generator(this, function (_g) {
             switch (_g.label) {
                 case 0:
-                    if (!openapiGeneratorCLIConfiguration.output) {
-                        throw new Error("Add output before starting, example: path.join(__dirname, \"./\")");
-                    }
+                    console.debug("Your project folder:", process.cwd());
                     return [4 /*yield*/, (0, exports.checkJavaInstall)()];
                 case 1:
                     _g.sent();
+                    return [4 /*yield*/, (0, exports.checkFolderExistsAndIfNeededCreateNew)(openapiGeneratorCLIConfiguration === null || openapiGeneratorCLIConfiguration === void 0 ? void 0 : openapiGeneratorCLIConfiguration.output)];
+                case 2:
+                    _g.sent();
+                    openapiGeneratorCLIConfig = __assign(__assign({ "generator-name": "typescript-axios", "model-name-prefix": "API" }, openapiGeneratorCLIConfiguration), { output: path_1.default.join(process.cwd(), (openapiGeneratorCLIConfiguration === null || openapiGeneratorCLIConfiguration === void 0 ? void 0 : openapiGeneratorCLIConfiguration.output) || directoryName) });
+                    console.info("configuration:", openapiGeneratorCLIConfig);
                     console.time("generate");
-                    openapiGeneratorCLIConfig = __assign({ "generator-name": "typescript-axios", "model-name-prefix": "API", "output": path_1.default.join(__dirname, "./") }, openapiGeneratorCLIConfiguration);
-                    console.log("configuration:", openapiGeneratorCLIConfig);
                     runGenerator = function () {
                         var configString = Object.entries(openapiGeneratorCLIConfig)
                             .reduce(function (acc, _a) {
@@ -97,7 +117,7 @@ function generatorInterfaces(_a) {
                             return "".concat(acc, " --").concat(key, " ").concat(value);
                         }, "").trim();
                         var cmd = "java -jar ".concat(pathToGenerator, " generate ").concat(configString);
-                        console.log("command:", cmd);
+                        console.info("command:", cmd);
                         child_process_1.default.execSync(cmd);
                     };
                     removePaths = function (output, files) { return files.forEach(function (filePath) {
@@ -147,11 +167,8 @@ function generatorInterfaces(_a) {
                     };
                     renameExports = function () {
                         filesToModify.forEach(function (file) {
-                            // Define file system path
-                            var filePath = path_1.default.join(openapiGeneratorCLIConfig.output || "./", file);
-                            // Read generated file
+                            var filePath = path_1.default.join(openapiGeneratorCLIConfig.output || directoryName, file);
                             var fileContent = fs_1.default.readFileSync(filePath).toString();
-                            // Execute replace for every export type
                             Object.keys(prefixInterfaces).forEach(function (exportTypes) {
                                 fileContent = replaceExport(fileContent, exportTypes);
                             });
@@ -165,8 +182,7 @@ function generatorInterfaces(_a) {
                     };
                     runGenerator();
                     renameExports();
-                    // TODO check where is problem with generation
-                    removePaths(openapiGeneratorCLIConfig.output || "./", filesToRemove);
+                    removePaths(openapiGeneratorCLIConfig.output || directoryName, filesToRemove);
                     console.timeEnd("generate");
                     return [2 /*return*/];
             }
