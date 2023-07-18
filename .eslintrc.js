@@ -5,7 +5,8 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    "@typescript-eslint/no-explicit-any": ["off"]
+    "@typescript-eslint/no-explicit-any": ["off"],
+    "@typescript-eslint/ban-ts-comment": ["off"]
   },
   plugins: ["@typescript-eslint"],
 }

@@ -1,12 +1,27 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "lib": [
+      "dom",
+      "ES2022"
+    ],
+    "rootDirs": [
+      "./",
+      "./src"
+    ],
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

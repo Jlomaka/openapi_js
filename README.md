@@ -37,9 +37,8 @@ const linkToSwagger = "{{LINK_TO_YOUR_SWAGGER}}";
 
 ## With Auth
 ```js
-const fetch = require("node-fetch");
+const axios = require("axios");
 const {generatorInterfaces} = require("openapi_js");
-const path = require("path");
 
 /**
  * @example {https://{{SITE_NAME}}/swagger.json}
@@ -49,19 +48,19 @@ let token;
 
 const getAuthToken = async () => {
   try {
-    /**
-     * @example {https://{{SITE_NAME}}/api/login}
-     */
-    let res = await fetch("{{LINK_TO_YOUR_API_AUTH_GET_TOKEN_METHODS}}", {
-      method: "POST", headers: {
+    const res = await axios({
+      baseURL: "https://example.com",
+      url: "/login",
+      method: "POST",
+      data: JSON.stringify({
+        email: "test@example.com", password: "example"
+      }),
+      headers: {
         "Content-Type": "application/json;charset=utf-8"
-      }, body: JSON.stringify({
-        email: "test@test.test", password: "12345678"
-      })
+      }
     });
-    res = await res.json();
 
-    token = res.token;
+    token = res.data.key;
   } catch (err) {
     console.log(err);
   }
@@ -104,5 +103,17 @@ Just add this script to your package.json
   "scripts": {
     "generate:interfaces": "node interfaces/interface.js"
   }
+}
+```
+
+## Troubleshot
+
+# Type error
+
+if you are using the front of the application without a back, at the time of the script execution you will need to add the following line to your `package.json` file
+
+```json
+{
+  "type": "module"
 }
 ```

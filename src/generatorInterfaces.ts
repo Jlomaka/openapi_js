@@ -117,7 +117,8 @@ export async function generatorInterfaces ({
   });
 
   const replaceExport = (source: string, exportType: any) => {
-    const prefix = [prefixInterfaces as IPrefixInterfaces]?.[exportType] || "";
+    // @ts-ignore
+    const prefix = prefixInterfaces?.[exportType];
     const matches = source.matchAll(new RegExp(`export ${exportType} (\\w+)`, "g"));
 
     Array.from(matches, ([, exportName]) => {

@@ -6,3 +6,5 @@ openapiInterfaces
 /interfaces/common.ts
 /interfaces/configuration.ts
 /interfaces/index.ts
+test
+/test/test.ts

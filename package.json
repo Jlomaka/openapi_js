@@ -1,6 +1,6 @@
 {
   "name": "openapi_js",
-  "version": "1.4.3",
+  "version": "1.4.6",
   "description": "",
   "author": "Jlomaka <webodinstudio@gmail.com>",
   "license": "ISC",
@@ -36,6 +36,7 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "axios": "^1.4.0",
     "eslint": "^8.45.0",
     "ts-node": "^10.9.1"
   }
