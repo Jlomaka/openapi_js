@@ -13,7 +13,7 @@
     "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
     "build": "npm run build:cjs && npm run build:esm && npm run build:types",
     "clean": "node tools/cleanup",
-    "package": "npm run build && npm pack",
+    "package": "npm run build && npm publish",
     "test": "ts-node test/test.ts"
   },
   "repository": {
