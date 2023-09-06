@@ -35,7 +35,7 @@ exports.checkFolderExistsAndIfNeededCreateNew = checkFolderExistsAndIfNeededCrea
  */
 async function generatorInterfaces({ pathToGenerator = path_1.default.join(__dirname, "../../files/openapi-generator-cli-6.1.0.jar"), filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"], filesToModify = ["api.ts"], prefixInterfaces = {
     interface: "I", enum: "E", type: "T"
-}, openapiGeneratorCLIConfiguration = {} }) {
+}, openapiGeneratorCLIConfiguration = {}, customJarString = "", customGenerateString = "" }) {
     console.debug("Your project folder:", process.cwd());
     await (0, exports.checkJavaInstall)();
     await (0, exports.checkFolderExistsAndIfNeededCreateNew)(openapiGeneratorCLIConfiguration === null || openapiGeneratorCLIConfiguration === void 0 ? void 0 : openapiGeneratorCLIConfiguration.output);
@@ -50,7 +50,7 @@ async function generatorInterfaces({ pathToGenerator = path_1.default.join(__dir
     const runGenerator = () => {
         const configString = Object.entries(openapiGeneratorCLIConfig)
             .reduce((acc, [key, value]) => `${acc} --${key} ${value}`, "").trim();
-        const cmd = `java -jar ${pathToGenerator} generate ${configString}`;
+        const cmd = `java -jar ${pathToGenerator} ${customJarString} generate ${configString} ${customGenerateString}`;
         console.info("command:", cmd);
         child_process_1.default.execSync(cmd);
     };

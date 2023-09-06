@@ -53,11 +53,16 @@ export interface IOpenapiGeneratorCLIConfiguration {
 }
 
 interface IProps {
+  /**
+   * By default, there will already be a file that uses the module to generate interfaces, you can also specify your custom path for the custom file
+   */
   pathToGenerator?: string;
   filesToRemove?: string[];
   filesToModify?: string[];
   prefixInterfaces?: IPrefixInterfaces;
   openapiGeneratorCLIConfiguration?: IOpenapiGeneratorCLIConfiguration;
+  customJarString?: string;
+  customGenerateString?: string;
 }
 
 /**
@@ -70,7 +75,9 @@ export async function generatorInterfaces ({
   prefixInterfaces = {
     interface: "I", enum: "E", type: "T"
   },
-  openapiGeneratorCLIConfiguration = {}
+  openapiGeneratorCLIConfiguration = {},
+  customJarString = "",
+  customGenerateString = ""
 }: IProps) {
   console.debug("Your project folder:", process.cwd());
 
@@ -93,7 +100,7 @@ export async function generatorInterfaces ({
     const configString = Object.entries(openapiGeneratorCLIConfig)
       .reduce((acc, [key, value]) => `${acc} --${key} ${value}`, "").trim();
 
-    const cmd = `java -jar ${pathToGenerator} generate ${configString}`;
+    const cmd = `java -jar ${pathToGenerator} ${customJarString} generate ${configString} ${customGenerateString}`;
 
     console.info("command:", cmd);
 

@@ -25,14 +25,19 @@ export interface IOpenapiGeneratorCLIConfiguration {
     output?: string;
 }
 interface IProps {
+    /**
+     * By default, there will already be a file that uses the module to generate interfaces, you can also specify your custom path for the custom file
+     */
     pathToGenerator?: string;
     filesToRemove?: string[];
     filesToModify?: string[];
     prefixInterfaces?: IPrefixInterfaces;
     openapiGeneratorCLIConfiguration?: IOpenapiGeneratorCLIConfiguration;
+    customJarString?: string;
+    customGenerateString?: string;
 }
 /**
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
-export declare function generatorInterfaces({ pathToGenerator, filesToRemove, filesToModify, prefixInterfaces, openapiGeneratorCLIConfiguration }: IProps): Promise<void>;
+export declare function generatorInterfaces({ pathToGenerator, filesToRemove, filesToModify, prefixInterfaces, openapiGeneratorCLIConfiguration, customJarString, customGenerateString }: IProps): Promise<void>;
 export {};
