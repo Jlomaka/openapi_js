@@ -9,3 +9,4 @@ openapiInterfaces
 test
 /test/test.ts
 /openapitools.json
+/src
