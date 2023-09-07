@@ -112,7 +112,7 @@ export async function generatorInterfaces({ filesToRemove = ["git_push.sh", ".op
         });
     };
     runGenerator();
-    // renameExports();
-    // removePaths(openapiGeneratorCLIConfig?.output || directoryName, filesToRemove);
+    renameExports();
+    removePaths((openapiGeneratorCLIConfig === null || openapiGeneratorCLIConfig === void 0 ? void 0 : openapiGeneratorCLIConfig.output) || directoryName, filesToRemove);
     console.timeEnd("generate");
 }
