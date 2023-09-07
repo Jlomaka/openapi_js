@@ -8,3 +8,4 @@ openapiInterfaces
 /interfaces/index.ts
 test
 /test/test.ts
+/openapitools.json

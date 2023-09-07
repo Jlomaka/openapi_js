@@ -25,9 +25,9 @@ export const checkFolderExistsAndIfNeededCreateNew = async (output = directoryNa
 /**
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
-export async function generatorInterfaces({ pathToGenerator = path.join(__dirname, "../../files/openapi-generator-cli-6.1.0.jar"), filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"], filesToModify = ["api.ts"], prefixInterfaces = {
+export async function generatorInterfaces({ filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"], filesToModify = ["api.ts"], prefixInterfaces = {
     interface: "I", enum: "E", type: "T"
-}, openapiGeneratorCLIConfiguration = {}, customJarString = "", customGenerateString = "" }) {
+}, openapiGeneratorCLIConfiguration = {}, customGenerateString = "" }) {
     console.debug("Your project folder:", process.cwd());
     await checkJavaInstall();
     await checkFolderExistsAndIfNeededCreateNew(openapiGeneratorCLIConfiguration === null || openapiGeneratorCLIConfiguration === void 0 ? void 0 : openapiGeneratorCLIConfiguration.output);
@@ -40,9 +40,15 @@ export async function generatorInterfaces({ pathToGenerator = path.join(__dirnam
     console.info("configuration:", openapiGeneratorCLIConfig);
     console.time("generate");
     const runGenerator = () => {
-        const configString = Object.entries(openapiGeneratorCLIConfig)
-            .reduce((acc, [key, value]) => `${acc} --${key} ${value}`, "").trim();
-        const cmd = `java -jar ${pathToGenerator} ${customJarString} generate ${configString} ${customGenerateString}`;
+        const configString = Object
+            .entries(openapiGeneratorCLIConfig)
+            .reduce((acc, [key, value]) => {
+            if (key === "model-name-prefix") {
+                return acc;
+            }
+            return `${acc} --${key} ${value}`;
+        }, "").trim();
+        const cmd = `openapi-generator-cli generate ${configString} ${customGenerateString}`;
         console.info("command:", cmd);
         childProcess.execSync(cmd);
     };
@@ -92,7 +98,7 @@ export async function generatorInterfaces({ pathToGenerator = path.join(__dirnam
     };
     const renameExports = () => {
         filesToModify.forEach((file) => {
-            const filePath = path.join(openapiGeneratorCLIConfig.output || directoryName, file);
+            const filePath = path.join((openapiGeneratorCLIConfig === null || openapiGeneratorCLIConfig === void 0 ? void 0 : openapiGeneratorCLIConfig.output) || directoryName, file);
             let fileContent = fs.readFileSync(filePath).toString();
             Object.keys(prefixInterfaces).forEach((exportTypes) => {
                 fileContent = replaceExport(fileContent, exportTypes);
@@ -106,7 +112,7 @@ export async function generatorInterfaces({ pathToGenerator = path.join(__dirnam
         });
     };
     runGenerator();
-    renameExports();
-    removePaths(openapiGeneratorCLIConfig.output || directoryName, filesToRemove);
+    // renameExports();
+    // removePaths(openapiGeneratorCLIConfig?.output || directoryName, filesToRemove);
     console.timeEnd("generate");
 }

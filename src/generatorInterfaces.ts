@@ -33,6 +33,9 @@ interface IPrefixInterfaces {
 }
 
 export interface IOpenapiGeneratorCLIConfiguration {
+  /**
+   * https://example.com/swagger.json
+   */
   readonly ["generator-name"]?: string;
   /**
    * API
@@ -53,15 +56,10 @@ export interface IOpenapiGeneratorCLIConfiguration {
 }
 
 interface IProps {
-  /**
-   * By default, there will already be a file that uses the module to generate interfaces, you can also specify your custom path for the custom file
-   */
-  pathToGenerator?: string;
   filesToRemove?: string[];
   filesToModify?: string[];
   prefixInterfaces?: IPrefixInterfaces;
   openapiGeneratorCLIConfiguration?: IOpenapiGeneratorCLIConfiguration;
-  customJarString?: string;
   customGenerateString?: string;
 }
 
@@ -69,14 +67,12 @@ interface IProps {
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
 export async function generatorInterfaces ({
-  pathToGenerator = path.join(__dirname, "../../files/openapi-generator-cli-6.1.0.jar"),
   filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"],
   filesToModify = ["api.ts"],
   prefixInterfaces = {
     interface: "I", enum: "E", type: "T"
   },
   openapiGeneratorCLIConfiguration = {},
-  customJarString = "",
   customGenerateString = ""
 }: IProps) {
   console.debug("Your project folder:", process.cwd());
@@ -97,10 +93,17 @@ export async function generatorInterfaces ({
   console.time("generate");
 
   const runGenerator = () => {
-    const configString = Object.entries(openapiGeneratorCLIConfig)
-      .reduce((acc, [key, value]) => `${acc} --${key} ${value}`, "").trim();
+    const configString = Object
+      .entries(openapiGeneratorCLIConfig)
+      .reduce((acc, [key, value]) => {
+        if (key === "model-name-prefix") {
+          return acc;
+        }
 
-    const cmd = `java -jar ${pathToGenerator} ${customJarString} generate ${configString} ${customGenerateString}`;
+        return `${acc} --${key} ${value}`;
+      }, "").trim();
+
+    const cmd = `openapi-generator-cli generate ${configString} ${customGenerateString}`;
 
     console.info("command:", cmd);
 
@@ -162,7 +165,7 @@ export async function generatorInterfaces ({
 
   const renameExports = () => {
     filesToModify.forEach((file) => {
-      const filePath = path.join(openapiGeneratorCLIConfig.output || directoryName, file);
+      const filePath = path.join(openapiGeneratorCLIConfig?.output || directoryName, file);
 
       let fileContent = fs.readFileSync(filePath).toString();
 
@@ -181,8 +184,8 @@ export async function generatorInterfaces ({
   };
 
   runGenerator();
-  renameExports();
-  removePaths(openapiGeneratorCLIConfig.output || directoryName, filesToRemove);
+  // renameExports();
+  // removePaths(openapiGeneratorCLIConfig?.output || directoryName, filesToRemove);
 
   console.timeEnd("generate");
 }

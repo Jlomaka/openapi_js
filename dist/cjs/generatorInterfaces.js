@@ -33,9 +33,9 @@ exports.checkFolderExistsAndIfNeededCreateNew = checkFolderExistsAndIfNeededCrea
 /**
  * https://github.com/swagger-api/swagger-codegen/tree/3.0.0#to-generate-a-sample-client-library
  */
-async function generatorInterfaces({ pathToGenerator = path_1.default.join(__dirname, "../../files/openapi-generator-cli-6.1.0.jar"), filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"], filesToModify = ["api.ts"], prefixInterfaces = {
+async function generatorInterfaces({ filesToRemove = ["git_push.sh", ".openapi-generator-ignore", ".npmignore", ".gitignore", ".openapi-generator"], filesToModify = ["api.ts"], prefixInterfaces = {
     interface: "I", enum: "E", type: "T"
-}, openapiGeneratorCLIConfiguration = {}, customJarString = "", customGenerateString = "" }) {
+}, openapiGeneratorCLIConfiguration = {}, customGenerateString = "" }) {
     console.debug("Your project folder:", process.cwd());
     await (0, exports.checkJavaInstall)();
     await (0, exports.checkFolderExistsAndIfNeededCreateNew)(openapiGeneratorCLIConfiguration === null || openapiGeneratorCLIConfiguration === void 0 ? void 0 : openapiGeneratorCLIConfiguration.output);
@@ -48,9 +48,15 @@ async function generatorInterfaces({ pathToGenerator = path_1.default.join(__dir
     console.info("configuration:", openapiGeneratorCLIConfig);
     console.time("generate");
     const runGenerator = () => {
-        const configString = Object.entries(openapiGeneratorCLIConfig)
-            .reduce((acc, [key, value]) => `${acc} --${key} ${value}`, "").trim();
-        const cmd = `java -jar ${pathToGenerator} ${customJarString} generate ${configString} ${customGenerateString}`;
+        const configString = Object
+            .entries(openapiGeneratorCLIConfig)
+            .reduce((acc, [key, value]) => {
+            if (key === "model-name-prefix") {
+                return acc;
+            }
+            return `${acc} --${key} ${value}`;
+        }, "").trim();
+        const cmd = `openapi-generator-cli generate ${configString} ${customGenerateString}`;
         console.info("command:", cmd);
         child_process_1.default.execSync(cmd);
     };
@@ -100,7 +106,7 @@ async function generatorInterfaces({ pathToGenerator = path_1.default.join(__dir
     };
     const renameExports = () => {
         filesToModify.forEach((file) => {
-            const filePath = path_1.default.join(openapiGeneratorCLIConfig.output || directoryName, file);
+            const filePath = path_1.default.join((openapiGeneratorCLIConfig === null || openapiGeneratorCLIConfig === void 0 ? void 0 : openapiGeneratorCLIConfig.output) || directoryName, file);
             let fileContent = fs_1.default.readFileSync(filePath).toString();
             Object.keys(prefixInterfaces).forEach((exportTypes) => {
                 fileContent = replaceExport(fileContent, exportTypes);
@@ -114,8 +120,8 @@ async function generatorInterfaces({ pathToGenerator = path_1.default.join(__dir
         });
     };
     runGenerator();
-    renameExports();
-    removePaths(openapiGeneratorCLIConfig.output || directoryName, filesToRemove);
+    // renameExports();
+    // removePaths(openapiGeneratorCLIConfig?.output || directoryName, filesToRemove);
     console.timeEnd("generate");
 }
 exports.generatorInterfaces = generatorInterfaces;

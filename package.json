@@ -1,6 +1,6 @@
 {
   "name": "openapi_js",
-  "version": "1.5.1",
+  "version": "2.0.0",
   "description": "",
   "author": "Jlomaka <webodinstudio@gmail.com>",
   "license": "ISC",
@@ -11,10 +11,11 @@
     "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
     "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
     "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
     "clean": "node tools/cleanup",
-    "package": "npm run build && npm publish",
-    "test": "ts-node test/test.ts"
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:types",
+    "build&publish": "npm run build && npm publish",
+    "test": "ts-node test/test.ts",
+    "test:auth": "ts-node test/testAuth.ts"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.7.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "axios": "^1.4.0",
