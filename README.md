@@ -13,7 +13,7 @@ In my case, I created the `interfaces` folder in the root of the project and add
 const {generatorInterfaces} = require("openapi_js");
 
 /**
- * @example {https://{{SITE_NAME}}/swagger.json}
+ * @example https://petstore.swagger.io/v2/swagger.json
  */
 const linkToSwagger = "{{LINK_TO_YOUR_SWAGGER}}";
 
