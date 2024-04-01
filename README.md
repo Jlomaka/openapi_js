@@ -1,6 +1,6 @@
 # HOW IT WORK
 
-under the hood it used https://openapi-generator.tech/ without previous installation.
+under the hood it used @openapitools/openapi-generator-cli just with extra functions like prefix to interfaces, types, enums clear no needed information.
 
 # Installation and usage
 

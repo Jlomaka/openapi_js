@@ -35,11 +35,11 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@openapitools/openapi-generator-cli": "^2.7.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "axios": "^1.4.0",
-    "eslint": "^8.45.0",
-    "ts-node": "^10.9.1"
+    "@openapitools/openapi-generator-cli": "^2.13.1",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "axios": "^1.6.8",
+    "eslint": "^8.57.0",
+    "ts-node": "^10.9.2"
   }
 }
